@@ -1,0 +1,16 @@
+syntax = "proto3";
+package intkey;
+
+option go_package = "github.com/mkawserm/intkey/pkg/intkey;intkey";
+
+message IntKey {
+  string key = 1;
+  uint64 value = 2;
+}
+
+service IntKeyRPC {
+  rpc Insert(IntKey) returns (IntKey){}
+  rpc Delete(IntKey) returns (IntKey){}
+  rpc Increment(IntKey) returns (IntKey){}
+  rpc Decrement(IntKey) returns (IntKey){}
+}

@@ -37,13 +37,12 @@ run:
 
 protoc:
 	@protoc \
-		-I=./pkg/proto/intkey \
-		-I=./pkg/proto/google \
+		-I=./pkg/proto \
 		--go_opt=module=github.com/mkawserm/intkey \
 		--go_out=. \
 		--go-grpc_opt=module=github.com/mkawserm/intkey \
 		--go-grpc_out=. \
-		intkey.proto
+		./pkg/proto/intkey/intkey.proto
 
 push:
 	git push github master

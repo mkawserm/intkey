@@ -69,7 +69,6 @@ func (r *RPCServer) SafeIncrement(ctx context.Context, in *IntKey) (*IntKey, err
 			Interface("IntKey", in).
 			Uint64("updated_value", store.MemStoreIns().Get(ctx, in.Key)).Msg("incremented")
 		rx <- in
-		return
 	}()
 
 	select {

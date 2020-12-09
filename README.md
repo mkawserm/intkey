@@ -47,3 +47,19 @@ ghz --insecure --async \
   -d '{"key":"test", "value": 1}' 0.0.0.0:8080
 
 ```
+
+
+```
+WITH RPS
+
+ghz --insecure --async \
+  --proto ./pkg/proto/intkey/intkey.proto \
+  --call intkey.IntKeyRPC/SafeIncrement \
+  -n 1000 \
+  -r 1000 \
+  -c 1000 \
+  -t 20s \
+  -z 60s \
+  -d '{"key":"test", "value": 1}' 0.0.0.0:8080
+
+```

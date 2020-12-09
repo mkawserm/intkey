@@ -65,11 +65,11 @@ func (r *RPCServer) SafeIncrement(ctx context.Context, in *IntKey) (*IntKey, err
 	ex := make(chan error, 1)
 
 	go func() {
-		ok, err := store.MemStoreIns().SafeIncrement(ctx, in.Key, in.Value)
+		ok, val, err := store.MemStoreIns().SafeIncrement(ctx, in.Key, in.Value)
 		if ok {
 			log.Info().
 				Interface("IntKey", in).
-				Uint64("updated_value", store.MemStoreIns().Get(ctx, in.Key)).Msg("incremented")
+				Uint64("updated_value", val).Msg("incremented")
 			rx <- in
 		} else {
 			ex <- err

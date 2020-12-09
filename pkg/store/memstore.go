@@ -56,14 +56,14 @@ func (m *MemStore) Increment(_ context.Context, key string, value uint64) (bool,
 	return false, errors.New("key does not exists")
 }
 
-func (m *MemStore) SafeIncrement(ctx context.Context, key string, value uint64) (bool, error) {
+func (m *MemStore) SafeIncrement(ctx context.Context, key string, value uint64) (bool, uint64, error) {
 	select {
 	case <-ctx.Done():
-		return false, ctx.Err()
+		return false, 0, ctx.Err()
 	default:
 		deadLine, ok := ctx.Deadline()
 		if !ok {
-			return false, errors.New("no deadline found")
+			return false, 0, errors.New("no deadline found")
 		}
 
 		if m.mu.TryLock(time.Until(deadLine) - time.Millisecond*500) {
@@ -73,9 +73,9 @@ func (m *MemStore) SafeIncrement(ctx context.Context, key string, value uint64) 
 			} else {
 				m.store[key] = value
 			}
-			return true, nil
+			return true, m.store[key], nil
 		}
-		return false, errors.New("failed to acquire lock")
+		return false, 0, errors.New("failed to acquire lock")
 	}
 }
 

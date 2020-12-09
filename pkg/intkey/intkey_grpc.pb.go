@@ -104,7 +104,7 @@ type UnsafeIntKeyRPCServer interface {
 }
 
 func RegisterIntKeyRPCServer(s grpc.ServiceRegistrar, srv IntKeyRPCServer) {
-	s.RegisterService(&_IntKeyRPC_serviceDesc, srv)
+	s.RegisterService(&IntKeyRPC_ServiceDesc, srv)
 }
 
 func _IntKeyRPC_Insert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -179,7 +179,10 @@ func _IntKeyRPC_Decrement_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-var _IntKeyRPC_serviceDesc = grpc.ServiceDesc{
+// IntKeyRPC_ServiceDesc is the grpc.ServiceDesc for IntKeyRPC service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var IntKeyRPC_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "intkey.IntKeyRPC",
 	HandlerType: (*IntKeyRPCServer)(nil),
 	Methods: []grpc.MethodDesc{

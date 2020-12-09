@@ -35,3 +35,15 @@ ghz --insecure --async \
   -d '{"key":"test", "value": 1}' 0.0.0.0:3030 
 
 ```
+
+
+```
+
+ghz --insecure --async \
+  --proto ./pkg/proto/intkey/intkey.proto \
+  --call intkey.IntKeyRPC/SafeIncrement \
+  -n 1000000 \
+  -c 50 -z 60s -t 20s \
+  -d '{"key":"test", "value": 1}' 0.0.0.0:3030
+
+```

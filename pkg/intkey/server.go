@@ -78,13 +78,13 @@ func (r *RPCServer) SafeIncrement(ctx context.Context, in *IntKey) (*IntKey, err
 
 	select {
 	case <-ctxWithTimeout.Done():
-		log.Debug().Msg("request timeout")
+		//log.Debug().Msg("request timeout")
 		return nil, ctxWithTimeout.Err()
 	case output := <-rx:
-		log.Debug().Msg("request success")
+		//log.Debug().Msg("request success")
 		return output, nil
 	case err := <-ex:
-		log.Debug().Msg("error received: " + err.Error())
+		//log.Debug().Msg("error received: " + err.Error())
 		return nil, err
 	}
 }

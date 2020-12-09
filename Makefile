@@ -4,6 +4,7 @@ change-version:
 	@echo "package constant\n\n//Version constant of the service\nconst Version = \"$(VERSION)\"">pkg/constant/version.go
 
 test:
+#	GOPRIVATE=repo GIT_TERMINAL_PROMPT=1 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -race ./... -v
 	go test -race ./... -v
 
 update-module:

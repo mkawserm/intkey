@@ -18,6 +18,8 @@ func StartServer() {
 		zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	}
 
+	log.Debug().Interface("conf", conf.ServiceConfigurationIns()).Msg("configuration")
+
 	log.Info().
 		Str("host", conf.ServiceConfigurationIns().Host).
 		Uint16("port", conf.ServiceConfigurationIns().Port).

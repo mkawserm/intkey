@@ -2,6 +2,8 @@ package intkey
 
 import (
 	"context"
+	"errors"
+	"github.com/mkawserm/intkey/pkg/conf"
 	"github.com/mkawserm/intkey/pkg/store"
 	"github.com/rs/zerolog/log"
 )
@@ -57,18 +59,27 @@ func (r *RPCServer) Increment(ctx context.Context, in *IntKey) (*IntKey, error) 
 
 func (r *RPCServer) SafeIncrement(ctx context.Context, in *IntKey) (*IntKey, error) {
 	log.Info().Interface("IntKey", in).Msg("SafeIncrement")
-	ok, err := store.MemStoreIns().SafeIncrement(ctx, in.Key, in.Value)
-	if ok {
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, conf.ServiceConfigurationIns().GlobalRequestTimeout)
+
+	rx := make(chan *IntKey, 1)
+
+	go func() {
+		_, _ = store.MemStoreIns().SafeIncrement(ctx, in.Key, in.Value)
 		log.Info().
 			Interface("IntKey", in).
 			Uint64("updated_value", store.MemStoreIns().Get(ctx, in.Key)).Msg("incremented")
-		return in, nil
-	}
+		rx <- in
+		return
+	}()
 
-	if err != nil {
-		log.Error().Msg(err.Error())
+	select {
+	case <-ctxWithTimeout.Done():
+		cancel()
+		return nil, errors.New("request timeout")
+	case output := <-rx:
+		cancel()
+		return output, nil
 	}
-	return nil, err
 }
 
 func (r *RPCServer) Decrement(ctx context.Context, in *IntKey) (*IntKey, error) {

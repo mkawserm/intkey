@@ -5,12 +5,14 @@ import (
 	"github.com/rs/zerolog/log"
 	"os"
 	"sync"
+	"time"
 )
 
 type ServiceConfiguration struct {
-	Host       string `env:"INTKEY_HOST" envDefault:"0.0.0.0"`
-	Port       uint16 `env:"INTKEY_PORT" envDefault:"8080"`
-	TimeFormat string `env:"INTKEY_TIME_FORMAT" envDefault:"default"`
+	Host                 string        `env:"INTKEY_HOST" envDefault:"0.0.0.0"`
+	Port                 uint16        `env:"INTKEY_PORT" envDefault:"8080"`
+	GlobalRequestTimeout time.Duration `env:"INTKEY_GLOBAL_REQUEST_TIMEOUT" envDefault:"10s"`
+	TimeFormat           string        `env:"INTKEY_TIME_FORMAT" envDefault:"default"`
 }
 
 var instantiated *ServiceConfiguration

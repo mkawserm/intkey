@@ -65,7 +65,6 @@ func (r *RPCServer) SafeIncrement(ctx context.Context, in *IntKey) (*IntKey, err
 	ex := make(chan error, 1)
 
 	go func() {
-		//time.Sleep(conf.ServiceConfigurationIns().GlobalRequestTimeout+time.Second*10)
 		ok, err := store.MemStoreIns().SafeIncrement(ctx, in.Key, in.Value)
 		if ok {
 			log.Info().
@@ -85,6 +84,7 @@ func (r *RPCServer) SafeIncrement(ctx context.Context, in *IntKey) (*IntKey, err
 		log.Debug().Msg("request success")
 		return output, nil
 	case err := <-ex:
+		log.Debug().Msg("error received: " + err.Error())
 		return nil, err
 	}
 }

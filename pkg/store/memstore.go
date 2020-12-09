@@ -3,13 +3,12 @@ package store
 import (
 	"context"
 	"errors"
-	"fmt"
 	"sync"
 	"time"
 )
 
 type MemStore struct {
-	mu    sync.Mutex
+	mu    *Mutex
 	store map[string]uint64
 }
 
@@ -62,21 +61,22 @@ func (m *MemStore) SafeIncrement(ctx context.Context, key string, value uint64) 
 	case <-ctx.Done():
 		return false, ctx.Err()
 	default:
-		fmt.Println("inside default")
-		time.Sleep(time.Second * 40)
-		fmt.Println("After 40 seconds")
-		return true, nil
+		deadLine, ok := ctx.Deadline()
+		if !ok {
+			return false, errors.New("no deadline found")
+		}
+
+		if m.mu.TryLock(time.Until(deadLine) - time.Millisecond*500) {
+			defer m.mu.Unlock()
+			if old, found := m.store[key]; found {
+				m.store[key] = old + value
+			} else {
+				m.store[key] = value
+			}
+			return true, nil
+		}
+		return false, errors.New("failed to acquire lock")
 	}
-	//ctx.Done()
-	//m.mu.Lock()
-	//defer m.mu.Unlock()
-	//
-	//if old, found := m.store[key]; found {
-	//	m.store[key] = old + value
-	//} else {
-	//	m.store[key] = value
-	//}
-	//return true, nil
 }
 
 func (m *MemStore) Decrement(_ context.Context, key string, value uint64) (bool, error) {
@@ -96,7 +96,10 @@ var once sync.Once
 
 func MemStoreIns() *MemStore {
 	once.Do(func() {
-		instantiated = &MemStore{store: make(map[string]uint64)}
+		instantiated = &MemStore{
+			mu:    NewMutex(),
+			store: make(map[string]uint64),
+		}
 	})
 	return instantiated
 }

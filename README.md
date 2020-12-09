@@ -31,8 +31,8 @@ GHZ: https://github.com/bojand/ghz
 ghz --insecure --async \
   --proto ./pkg/proto/intkey/intkey.proto \
   --call intkey.IntKeyRPC/SafeIncrement \
-  -c 1 -n 1 \
-  -d '{"key":"test", "value": 1}' 0.0.0.0:3030 
+  -c 1 -n 1 -t 20s \
+  -d '{"key":"test", "value": 1}' 0.0.0.0:8080 
 
 ```
 
@@ -44,6 +44,6 @@ ghz --insecure --async \
   --call intkey.IntKeyRPC/SafeIncrement \
   -n 1000 \
   -c 1000 -t 20s \
-  -d '{"key":"test", "value": 1}' 0.0.0.0:3030
+  -d '{"key":"test", "value": 1}' 0.0.0.0:8080
 
 ```

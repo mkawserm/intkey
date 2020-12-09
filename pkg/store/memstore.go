@@ -3,7 +3,9 @@ package store
 import (
 	"context"
 	"errors"
+	"fmt"
 	"sync"
+	"time"
 )
 
 type MemStore struct {
@@ -55,16 +57,26 @@ func (m *MemStore) Increment(_ context.Context, key string, value uint64) (bool,
 	return false, errors.New("key does not exists")
 }
 
-func (m *MemStore) SafeIncrement(_ context.Context, key string, value uint64) (bool, error) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	if old, found := m.store[key]; found {
-		m.store[key] = old + value
-	} else {
-		m.store[key] = value
+func (m *MemStore) SafeIncrement(ctx context.Context, key string, value uint64) (bool, error) {
+	select {
+	case <-ctx.Done():
+		return false, ctx.Err()
+	default:
+		fmt.Println("inside default")
+		time.Sleep(time.Second * 40)
+		fmt.Println("After 40 seconds")
+		return true, nil
 	}
-	return true, nil
+	//ctx.Done()
+	//m.mu.Lock()
+	//defer m.mu.Unlock()
+	//
+	//if old, found := m.store[key]; found {
+	//	m.store[key] = old + value
+	//} else {
+	//	m.store[key] = value
+	//}
+	//return true, nil
 }
 
 func (m *MemStore) Decrement(_ context.Context, key string, value uint64) (bool, error) {

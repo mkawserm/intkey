@@ -2,7 +2,6 @@ package intkey
 
 import (
 	"context"
-	"errors"
 	"github.com/mkawserm/intkey/pkg/conf"
 	"github.com/mkawserm/intkey/pkg/store"
 	"github.com/rs/zerolog/log"
@@ -60,24 +59,33 @@ func (r *RPCServer) Increment(ctx context.Context, in *IntKey) (*IntKey, error) 
 func (r *RPCServer) SafeIncrement(ctx context.Context, in *IntKey) (*IntKey, error) {
 	log.Info().Interface("IntKey", in).Msg("SafeIncrement")
 	ctxWithTimeout, cancel := context.WithTimeout(ctx, conf.ServiceConfigurationIns().GlobalRequestTimeout)
+	defer cancel()
 
 	rx := make(chan *IntKey, 1)
+	ex := make(chan error, 1)
 
 	go func() {
-		_, _ = store.MemStoreIns().SafeIncrement(ctx, in.Key, in.Value)
-		log.Info().
-			Interface("IntKey", in).
-			Uint64("updated_value", store.MemStoreIns().Get(ctx, in.Key)).Msg("incremented")
-		rx <- in
+		//time.Sleep(conf.ServiceConfigurationIns().GlobalRequestTimeout+time.Second*10)
+		ok, err := store.MemStoreIns().SafeIncrement(ctx, in.Key, in.Value)
+		if ok {
+			log.Info().
+				Interface("IntKey", in).
+				Uint64("updated_value", store.MemStoreIns().Get(ctx, in.Key)).Msg("incremented")
+			rx <- in
+		} else {
+			ex <- err
+		}
 	}()
 
 	select {
 	case <-ctxWithTimeout.Done():
-		cancel()
-		return nil, errors.New("request timeout")
+		log.Debug().Msg("request timeout")
+		return nil, ctxWithTimeout.Err()
 	case output := <-rx:
-		cancel()
+		log.Debug().Msg("request success")
 		return output, nil
+	case err := <-ex:
+		return nil, err
 	}
 }
 

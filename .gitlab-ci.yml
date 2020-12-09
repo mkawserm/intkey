@@ -1,5 +1,19 @@
 stages:
+  - test
   - build
+
+test:
+  environment:
+    name: test
+  stage: test
+  image:
+    name: golang:1.15.6
+    entrypoint: [""]
+  script:
+    - export ENVIRONMENT_NAME=ci
+    - git config --global url."https://${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD}@${CI_SERVER_HOST}/".insteadOf "https://${CI_SERVER_HOST}/"
+    - make test
+
 
 build-slim-container:
   tags:

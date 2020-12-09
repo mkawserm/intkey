@@ -21,3 +21,17 @@ $ go install \
     google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
 ```
+
+# LOAD TEST #
+
+```
+GHZ: https://github.com/bojand/ghz
+/intkey.IntKeyRPC/SafeIncrement
+
+ghz --insecure --async \
+  --proto ./pkg/proto/intkey/intkey.proto \
+  --call intkey.IntKeyRPC/SafeIncrement \
+  -c 1 -n 1 \
+  -d '{"key":"test", "value": 1}' 0.0.0.0:3030 
+
+```

@@ -11,6 +11,13 @@ type MemStore struct {
 	store map[string]uint64
 }
 
+func (m *MemStore) Get(_ context.Context, key string) uint64 {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	return m.store[key]
+}
+
 func (m *MemStore) Insert(_ context.Context, key string, value uint64) (bool, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -46,6 +53,18 @@ func (m *MemStore) Increment(_ context.Context, key string, value uint64) (bool,
 	}
 
 	return false, errors.New("key does not exists")
+}
+
+func (m *MemStore) SafeIncrement(_ context.Context, key string, value uint64) (bool, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if old, found := m.store[key]; found {
+		m.store[key] = old + value
+	} else {
+		m.store[key] = value
+	}
+	return true, nil
 }
 
 func (m *MemStore) Decrement(_ context.Context, key string, value uint64) (bool, error) {

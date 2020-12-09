@@ -13,4 +13,6 @@ service IntKeyRPC {
   rpc Delete(IntKey) returns (IntKey){}
   rpc Increment(IntKey) returns (IntKey){}
   rpc Decrement(IntKey) returns (IntKey){}
+
+  rpc SafeIncrement(IntKey) returns (IntKey){}
 }

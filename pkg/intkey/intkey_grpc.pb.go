@@ -21,6 +21,7 @@ type IntKeyRPCClient interface {
 	Delete(ctx context.Context, in *IntKey, opts ...grpc.CallOption) (*IntKey, error)
 	Increment(ctx context.Context, in *IntKey, opts ...grpc.CallOption) (*IntKey, error)
 	Decrement(ctx context.Context, in *IntKey, opts ...grpc.CallOption) (*IntKey, error)
+	SafeIncrement(ctx context.Context, in *IntKey, opts ...grpc.CallOption) (*IntKey, error)
 }
 
 type intKeyRPCClient struct {
@@ -67,6 +68,15 @@ func (c *intKeyRPCClient) Decrement(ctx context.Context, in *IntKey, opts ...grp
 	return out, nil
 }
 
+func (c *intKeyRPCClient) SafeIncrement(ctx context.Context, in *IntKey, opts ...grpc.CallOption) (*IntKey, error) {
+	out := new(IntKey)
+	err := c.cc.Invoke(ctx, "/intkey.IntKeyRPC/SafeIncrement", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IntKeyRPCServer is the server API for IntKeyRPC service.
 // All implementations must embed UnimplementedIntKeyRPCServer
 // for forward compatibility
@@ -75,6 +85,7 @@ type IntKeyRPCServer interface {
 	Delete(context.Context, *IntKey) (*IntKey, error)
 	Increment(context.Context, *IntKey) (*IntKey, error)
 	Decrement(context.Context, *IntKey) (*IntKey, error)
+	SafeIncrement(context.Context, *IntKey) (*IntKey, error)
 	mustEmbedUnimplementedIntKeyRPCServer()
 }
 
@@ -93,6 +104,9 @@ func (UnimplementedIntKeyRPCServer) Increment(context.Context, *IntKey) (*IntKey
 }
 func (UnimplementedIntKeyRPCServer) Decrement(context.Context, *IntKey) (*IntKey, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Decrement not implemented")
+}
+func (UnimplementedIntKeyRPCServer) SafeIncrement(context.Context, *IntKey) (*IntKey, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SafeIncrement not implemented")
 }
 func (UnimplementedIntKeyRPCServer) mustEmbedUnimplementedIntKeyRPCServer() {}
 
@@ -179,6 +193,24 @@ func _IntKeyRPC_Decrement_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IntKeyRPC_SafeIncrement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IntKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IntKeyRPCServer).SafeIncrement(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/intkey.IntKeyRPC/SafeIncrement",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IntKeyRPCServer).SafeIncrement(ctx, req.(*IntKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IntKeyRPC_ServiceDesc is the grpc.ServiceDesc for IntKeyRPC service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -201,6 +233,10 @@ var IntKeyRPC_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Decrement",
 			Handler:    _IntKeyRPC_Decrement_Handler,
+		},
+		{
+			MethodName: "SafeIncrement",
+			Handler:    _IntKeyRPC_SafeIncrement_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

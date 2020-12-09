@@ -55,7 +55,6 @@ WITH RPS
 ghz --insecure --async \
   --proto ./pkg/proto/intkey/intkey.proto \
   --call intkey.IntKeyRPC/SafeIncrement \
-  -n 1000 \
   -r 1000 \
   -c 1000 \
   -t 20s \

@@ -28,11 +28,11 @@ clean:
 run:
 	go run cmd/intkey/intkey.go
 
-#container:
-#	docker build . -f Dockerfile -t intkey:latest --build-arg GITLAB_ID=$GITLAB_ID --build-arg GITLAB_TOKEN=$GITLAB_TOKEN
+alpine-container:
+	docker build . -f docker/alpine/Dockerfile -t intkey:latest --build-arg GIT_DOMAIN=$GIT_DOMAIN --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg GIT_PASSWORD=$GIT_PASSWORD
 
-#slim-container:
-#	docker build . -f Dockerfile:slim -t intkey:latest-slim --build-arg GITLAB_ID=$GITLAB_ID --build-arg GITLAB_TOKEN=$GITLAB_TOKEN
+slim-container:
+	docker build . -f docker/slim/Dockerfile -t intkey:latest-slim --build-arg GIT_DOMAIN=$GIT_DOMAIN --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg GIT_PASSWORD=$GIT_PASSWORD
 
 
 protoc:

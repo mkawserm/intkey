@@ -9,7 +9,7 @@ import (
 
 type ServiceConfiguration struct {
 	Host       string `env:"INTKEY_HOST" envDefault:"0.0.0.0"`
-	Port       uint16 `env:"INTKEY_PORT" envDefault:"3030"`
+	Port       uint16 `env:"INTKEY_PORT" envDefault:"8080"`
 	TimeFormat string `env:"INTKEY_TIME_FORMAT" envDefault:"default"`
 }
 

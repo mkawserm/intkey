@@ -4,10 +4,10 @@ change-version:
 	@echo "package constant\n\n//Version constant of the service\nconst Version = \"$(VERSION)\"">pkg/constant/version.go
 
 update-module:
-	go get -v github.com/golang/protobuf
 	go get -v google.golang.org/grpc
 	go get -v github.com/rs/zerolog
 	go get -v github.com/caarlos0/env/v6
+	go get -v google.golang.org/protobuf
 #	go env -w GOPRIVATE=repo
 #	go get -v repo
 

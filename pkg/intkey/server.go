@@ -70,6 +70,7 @@ func (r *RPCServer) SafeIncrement(ctx context.Context, in *IntKey) (*IntKey, err
 			log.Info().
 				Interface("IntKey", in).
 				Uint64("updated_value", val).Msg("incremented")
+			in.Value = val
 			rx <- in
 		} else {
 			ex <- err

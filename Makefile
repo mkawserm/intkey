@@ -16,8 +16,8 @@ update-module:
 #	go get -v repo
 
 build:
-#	GOPRIVATE=repo GIT_TERMINAL_PROMPT=1 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/intkey cmd/intkey/intkey.go
-	go build -v -o bin/intkey cmd/intkey/intkey.go
+	GOPRIVATE=repo GIT_TERMINAL_PROMPT=1 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/intkey cmd/intkey/intkey.go
+#	go build -v -o bin/intkey cmd/intkey/intkey.go
 
 simple-build:
 	go build -v -o bin/intkey cmd/intkey/intkey.go

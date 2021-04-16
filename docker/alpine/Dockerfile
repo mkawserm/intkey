@@ -25,7 +25,7 @@ RUN echo "Asia/Dhaka" > /etc/timezone
 RUN cp /usr/share/zoneinfo/Asia/Dhaka /etc/localtime
 
 #USER app
-#WORKDIR /app
+WORKDIR /app
 EXPOSE 8080
 COPY --from=builder /app/bin/intkey /app/intkey
 CMD ["intkey"]

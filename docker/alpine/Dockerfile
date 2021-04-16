@@ -24,8 +24,8 @@ RUN apk --no-cache add tzdata ca-certificates mailcap && addgroup -S app && addu
 RUN echo "Asia/Dhaka" > /etc/timezone
 RUN cp /usr/share/zoneinfo/Asia/Dhaka /etc/localtime
 
-USER app
-WORKDIR /app
+#USER app
+#WORKDIR /app
 EXPOSE 8080
 COPY --from=builder /app/bin/intkey /app/intkey
 CMD ["intkey"]
